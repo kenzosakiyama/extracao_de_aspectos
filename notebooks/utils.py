@@ -4,6 +4,7 @@ import spacy
 from textacy.preprocessing import normalize_hyphenated_words, normalize_unicode, normalize_whitespace
 from textacy.preprocessing import remove_accents, remove_punctuation
 from textacy.spacier.doc_extensions import to_bag_of_words, to_bag_of_terms
+from textacy.extract import semistructured_statements
 
 from nltk.corpus import stopwords
 from wordcloud import WordCloud
@@ -49,15 +50,25 @@ def get_ngram_df(raw_text: spacy.language.Doc, n: tuple = (2,3,4)) -> pd.DataFra
 
     return ngram_df
 
-def build_wordcloud(text: str, additional_stop_words: List[str], output_file: str = "wordcloud.png", save_file: bool = False) -> None:
+def build_wordcloud(text: str, additional_stop_words: List[str], color_map: str = "binary", output_file: str = "wordcloud.png", save_file: bool = False) -> None:
 
     stop_words = stopwords.words("english")
     stop_words.extend([word.lower() for word in additional_stop_words])
 
-    wc = WordCloud(colormap='binary', max_words=200, stopwords=stop_words, background_color='white', width=1600, height=800)
+    wc = WordCloud(colormap=color_map, max_words=200, stopwords=stop_words, background_color='white', width=1600, height=800)
     cloud = wc.generate(text.lower())
+
     plt.imshow(cloud, interpolation='bilinear')
     plt.axis("off")
     # plt.close()
 
     if save_file: wc.to_file(output_file)
+
+def get_statements(parsed_doc: spacy.language.Doc, possible_subjects: List[str]) -> List[tuple]:
+
+    statements = []
+
+    for subject in possible_subjects:
+        statements.extend(list(semistructured_statements(parsed_doc, subject)))
+
+    return statements
