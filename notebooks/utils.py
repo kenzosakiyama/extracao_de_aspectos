@@ -60,7 +60,6 @@ def build_wordcloud(text: str, additional_stop_words: List[str], color_map: str 
 
     plt.imshow(cloud, interpolation='bilinear')
     plt.axis("off")
-    # plt.close()
 
     if save_file: wc.to_file(output_file)
 
