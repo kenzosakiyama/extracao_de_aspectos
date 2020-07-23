@@ -1,4 +1,6 @@
+from typing import List, Tuple
 import pandas as pd
+import json
 import spacy
 
 from textacy.preprocessing import normalize_hyphenated_words, normalize_unicode, normalize_whitespace
@@ -8,8 +10,6 @@ from textacy.extract import semistructured_statements
 
 from nltk.corpus import stopwords
 from wordcloud import WordCloud
-
-from typing import List
 
 import matplotlib.pyplot as plt
 
@@ -72,3 +72,20 @@ def get_statements(parsed_doc: spacy.language.Doc, possible_subjects: List[str])
         statements.extend(list(semistructured_statements(parsed_doc, subject)))
 
     return statements
+
+def serialize_statements(statements: Tuple[spacy.tokens.Span, spacy.tokens.Span, spacy.tokens.Span], output_path: str) -> None:
+
+    serializable_object = []
+
+    for statement in statements:
+        serializable_object.append(
+            [
+                statement[0].text,
+                statement[1].text,
+                statement[2].text
+            ]
+        )
+    
+    with open(output_path, "w") as f:
+        json.dump(serializable_object, f, indent=2)
+    
