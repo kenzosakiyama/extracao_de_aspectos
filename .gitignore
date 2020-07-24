@@ -130,4 +130,6 @@ dmypy.json
 
 
 .vscode 
-data/
+data/extreme_negative.csv
+data/extreme_positive.csv
+data/tech_test.tsv
